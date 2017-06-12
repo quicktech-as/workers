@@ -8,4 +8,3 @@ testImport:
   version: v1.1.4
   subpackages:
   - assert
-- package: hydra-athena/config

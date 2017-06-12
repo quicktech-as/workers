@@ -1,6 +1,8 @@
 package main
 
-import "workers/cmd"
+import (
+	"workers/cmd"
+)
 
 func main() {
 	cmd.Execute()

@@ -1,10 +1,11 @@
 package cmd
 
-import (
-	"log"
-)
+import "fmt"
 
 // Execute adds all child commands to the root command.
 func Execute() {
-	log.Println("Running...")
+	orders := GetNewOrders()
+
+	fmt.Println("Running...")
+	fmt.Printf("ORDERS: %v", orders)
 }
