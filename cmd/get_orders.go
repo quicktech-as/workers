@@ -1,15 +1,14 @@
 package cmd
 
 import (
-	"workers/connection"
+	"fmt"
 	"workers/models"
+
+	"github.com/jmoiron/sqlx"
 )
 
 // GetNewOrders returns new orders
-func GetNewOrders() (orders []models.Order) {
-	db, err := connection.Get()
-	checkerr(err)
-
+func GetNewOrders(newOrdersCh chan models.Order, db *sqlx.DB) {
 	rows, err := db.Queryx("SELECT id, uuid, status, created_at FROM orders WHERE status = 'open'")
 	checkerr(err)
 
@@ -19,10 +18,13 @@ func GetNewOrders() (orders []models.Order) {
 		err = rows.StructScan(&order)
 		checkerr(err)
 
-		orders = append(orders, order)
-	}
+		fmt.Printf("NEW ORDER: %s\n", order.UUID)
 
-	return orders
+		db.MustExec("UPDATE orders SET status='processing' WHERE id=?", order.ID)
+		fmt.Printf("PROCESSING ORDER: %s\n", order.UUID)
+
+		newOrdersCh <- order
+	}
 }
 
 func checkerr(err error) {
