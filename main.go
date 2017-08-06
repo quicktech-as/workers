@@ -1,7 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/quicktech-as/workers/cmd"
@@ -20,6 +24,9 @@ func main() {
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 
+	finish := make(chan os.Signal, 1)
+	signal.Notify(finish, syscall.SIGINT, syscall.SIGTERM)
+
 	go func() {
 		for {
 			select {
@@ -27,6 +34,9 @@ func main() {
 				go cmd.ProcessOrder(order, db, &wg)
 			case <-time.After(time.Second * 5):
 				go cmd.GetNewOrders(newOrdersCh, db, &wg)
+			case <-finish:
+				fmt.Println("Exiting...")
+				wg.Done()
 			}
 		}
 	}()
