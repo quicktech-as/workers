@@ -1,9 +1,9 @@
 package main
 
 import (
-	"workers/cmd"
-	"workers/connection"
-	"workers/models"
+	"github.com/quicktech-as/workers/cmd"
+	"github.com/quicktech-as/workers/connection"
+	"github.com/quicktech-as/workers/models"
 )
 
 func main() {

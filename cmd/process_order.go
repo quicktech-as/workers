@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"workers/models"
+	"github.com/quicktech-as/workers/models"
 
 	"github.com/jmoiron/sqlx"
 )
