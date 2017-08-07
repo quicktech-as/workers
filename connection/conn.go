@@ -1,6 +1,8 @@
 package connection
 
 import (
+	"os"
+
 	"github.com/jmoiron/sqlx"
 
 	// Used mysql drive on sql
@@ -16,7 +18,7 @@ var (
 // Get get mysql connection
 func Get() (*sqlx.DB, error) {
 	if DB == nil {
-		DB, err = sqlx.Connect("mysql", "root:root@tcp(192.168.99.100:3306)/workers")
+		DB, err = sqlx.Connect("mysql", os.Getenv("MYSQL_URL"))
 		if err != nil {
 			return nil, err
 		}

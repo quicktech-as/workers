@@ -2,13 +2,15 @@ package cmd
 
 import (
 	"fmt"
-	"workers/models"
+	"sync"
+
+	"github.com/quicktech-as/workers/models"
 
 	"github.com/jmoiron/sqlx"
 )
 
 // GetNewOrders returns new orders
-func GetNewOrders(newOrdersCh chan models.Order, db *sqlx.DB) {
+func GetNewOrders(newOrdersCh chan models.Order, db *sqlx.DB, wg *sync.WaitGroup) {
 	rows, err := db.Queryx("SELECT id, uuid, status, created_at FROM orders WHERE status = 'open'")
 	checkerr(err)
 
@@ -23,8 +25,11 @@ func GetNewOrders(newOrdersCh chan models.Order, db *sqlx.DB) {
 		db.MustExec("UPDATE orders SET status='processing' WHERE id=?", order.ID)
 		fmt.Printf("PROCESSING ORDER: %s\n", order.UUID)
 
+		wg.Add(1)
 		newOrdersCh <- order
 	}
+
+	fmt.Println("EMPTY ORDERS")
 }
 
 func checkerr(err error) {
